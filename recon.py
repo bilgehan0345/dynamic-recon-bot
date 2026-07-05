@@ -3,7 +3,6 @@ import os
 import asyncio
 import httpx
 import sys
-import socket
 
 async def fetch_crtsh(client, domain): # Fetches subdomains from crt.sh
     try:
