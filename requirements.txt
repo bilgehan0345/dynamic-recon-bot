@@ -1,0 +1,6 @@
+# Projeyi çalıştırmak için gereken dış kütüphaneler
+# Kurulum komutu: pip install -r requirements.txt
+
+httpx          # Asenkron HTTP istekleri için
+python-dotenv  # .env dosyasından değişken okumak için
+DNSPython      # DNS sorguları için
