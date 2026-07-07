@@ -2,17 +2,19 @@
 
 An automated, asynchronous network reconnaissance and OSINT (Open Source Intelligence) tool built with Python and `httpx`. Designed for security professionals and penetration testers to gather assets quickly and efficiently.
 
-> ⚠️ **Note:** This project is currently in active development. The current version implements **Phase 1: Passive Subdomain Enumeration**. Active port scanning and service detection (Phase 2+) are planned for upcoming updates (see [Project Roadmap](#-project-roadmap)).
+> ⚠️ **Note:** This project is currently in active development. The current version implements **Phase 1 (Passive Subdomain Enumeration)**, **Phase 2 (DNS Resolution)**, and **Phase 3 (Shodan Port & Vulnerability Scanning)**. CLI argument parsing and export utilities are planned for upcoming updates (see [Project Roadmap](#-project-roadmap)).
 
 ---
 
-## ⚡ Features (Phase 1)
+## ⚡ Features
 
 - **Asynchronous Execution:** Built on top of Python's `asyncio` and `httpx.AsyncClient` to perform network requests concurrently, ensuring maximum performance.
 - **Passive Subdomain Harvesting:** Queries multiple reputable OSINT data sources simultaneously:
   - 🔍 **crt.sh:** Certificate Transparency log parser.
   - 🎯 **HackerTarget:** Host search utility.
   - 🛡️ **AlienVault OTX:** Passive DNS indicator lookup.
+- **Asynchronous DNS Resolution:** Resolves discovered subdomains to their IPv4 addresses concurrently using `asyncio.getaddrinfo`, with a configurable concurrency limit to avoid overwhelming DNS servers.
+- **Shodan Integration:** Scans resolved IPs against the Shodan REST API to retrieve open ports, running services, and known CVE vulnerabilities. Includes rate-limit protection with a 1-second delay between requests.
 - **Robust Error Tolerance:** Handles server timeouts, rate limits (429), and gateway errors (502) gracefully without crashing the pipeline.
 - **Safe Secrets Management:** Securely loads sensitive API keys from `.env` using `python-dotenv`.
 - **Automatic Sanitization:** Deduplicates subdomains and cleans wildcards (`*.`), trailing spaces, and case disparities.
@@ -39,7 +41,7 @@ Copy the configuration template and create your local environment file:
 cp .env.example .env
 ```
 Open `.env` in a text editor and add your API keys:
-- `SHODAN_API_KEY` (Required for Phase 2 scans)
+- `SHODAN_API_KEY` (Required for Phase 3 Shodan scans)
 - `ALIENVAULT_API_KEY` (Optional, helps bypass OTX rate limits)
 
 ---
@@ -58,14 +60,32 @@ Target Domain (eg: google.com): google.com
 ### Example Terminal Output:
 ```text
 [+] API Keys loaded successfully.
+
+Target Domain (eg: google.com): target.com
+
 [*] Starting Phase 1: Passive Reconnaissance for target.com
 [*] Fetching subdomains from sources concurrently...
+[+] Found 4 unique subdomains.
 
-[+] Found 4 unique subdomains:
-api.target.com
-mail.target.com
-vpn.target.com
-www.target.com
+[*] Starting Phase 2: DNS Resolution...
+[+] Found 3 unique active IP addresses.
+
+[*] Starting Phase 3: Shodan Scanning...
+[*] Scanning (1/3): 1.2.3.4
+[*] Scanning (2/3): 5.6.7.8
+[*] Scanning (3/3): 9.10.11.12
+[+] Shodan bulk scan completed.
+
+=== SHODAN SCAN RESULTS ===
+
+[IP] 1.2.3.4
+  [+] Open Ports: [80, 443]
+  [+] Service Details:
+      - Port 80: nginx
+      - Port 443: nginx
+
+[IP] 5.6.7.8
+  [-] Error: No information available on Shodan.
 ```
 
 ---
@@ -73,9 +93,10 @@ www.target.com
 ## 🗺️ Project Roadmap
 
 - [x] **Phase 1:** Passive Subdomain Enumeration (Concurrently fetched, sanitized & sorted).
-- [ ] **Phase 2:** Active DNS Resolution & Port Scanning (Resolve IPs and fetch open ports, running services, and CVE vulnerabilities via Shodan).
-- [ ] **Phase 3:** Modularization & CLI Argument Parser (`argparse` integration for passive-only vs active scanning options).
-- [ ] **Phase 4:** Export Utilities (Save results directly to JSON, CSV, or TXT formats).
+- [x] **Phase 2:** Active DNS Resolution (Subdomains resolved to unique IPv4 addresses concurrently).
+- [x] **Phase 3:** Shodan Port & Vulnerability Scanning (Open ports, services, and CVEs retrieved per IP with rate-limit protection).
+- [ ] **Phase 4:** CLI Argument Parser (`argparse` integration for passive-only vs active scanning options).
+- [ ] **Phase 5:** Export Utilities (Save results directly to JSON, CSV, or TXT formats).
 
 ---
 
