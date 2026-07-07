@@ -5,7 +5,7 @@ import httpx
 import sys
 import ipaddress
 
-from modules.passive import fetch_crtsh, fetch_hackertarget, fetch_alienvault
+from modules.passive import fetch_crtsh, fetch_hackertarget, fetch_alienvault, fetch_wayback
 from modules.resolver import resolve_subdomains_concurrently
 from modules.shodan_scanner import run_shodan_scans
 
@@ -68,7 +68,8 @@ async def main():
             tasks = [
                 fetch_crtsh(client, target),
                 fetch_hackertarget(client, target),
-                fetch_alienvault(client, target, ALIENVAULT_API_KEY)
+                fetch_alienvault(client, target, ALIENVAULT_API_KEY),
+                fetch_wayback(client, target)
             ]
             
             print("[*] Fetching subdomains from sources concurrently...")

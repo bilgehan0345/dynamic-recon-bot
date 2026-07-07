@@ -5,6 +5,7 @@ This module collects subdomains for a target domain from passive third-party sou
 1. crt.sh (SSL/TLS certificates transparency logs)
 2. HackerTarget (passive DNS lookup API)
 3. AlienVault OTX (passive DNS records)
+4. Wayback Machine (archive subdomains)
 """
 
 import httpx
@@ -81,4 +82,41 @@ async def fetch_alienvault(client, domain, api_key=None): # Fetches subdomains f
         return set()
     except httpx.HTTPStatusError as e:
         print(f"[alienvault] HTTP Error: {e.response.status_code}")
+        return set()
+
+async def fetch_wayback(client, domain): # Fetches subdomains from wayback machine
+    try:
+        url = f"http://web.archive.org/cdx/search/cdx?url=*.{domain}/*&output=json&collapse=urlkey"
+        response = await client.get(url, timeout=30.0) # Wayback can be slow sometimes
+        response.raise_for_status()
+        data = response.json()
+        
+        # data: list of lists, where the first list is headers and the rest are results.
+        # Example: [["urlkey", "timestamp", "original", ...], ["com,target,sub)/", ...]]
+        
+        subdomains = set()
+        if not data or len(data) < 2:
+            return subdomains
+            
+        # Skip the first element as it contains column headers
+        for entry in data[1:]:
+            if len(entry) > 2:
+                original_url = entry[2] # Index 2 contains the original URL
+                # Simple extraction: split by / and get the domain part
+                parts = original_url.replace("http://", "").replace("https://", "").split("/")
+                if parts:
+                    name = parts[0].split(":")[0] # Remove port if any
+                    name = name.strip().lower().lstrip("*.")
+                    if domain in name:
+                        subdomains.add(name)
+        
+        return subdomains
+    except httpx.TimeoutException:
+        print("[wayback] Timeout — Request timed out")
+        return set()
+    except httpx.HTTPStatusError as e:
+        print(f"[wayback] HTTP Error: {e.response.status_code}")
+        return set()
+    except Exception as e:
+        print(f"[wayback] Parsing Error: {e}")
         return set()
