@@ -95,6 +95,7 @@ Target Domain (eg: google.com): target.com
 - [x] **Phase 1:** Passive Subdomain Enumeration (Concurrently fetched, sanitized & sorted).
 - [x] **Phase 2:** Active DNS Resolution (Subdomains resolved to unique IPv4 addresses concurrently).
 - [x] **Phase 3:** Shodan Port & Vulnerability Scanning (Open ports, services, and CVEs retrieved per IP with rate-limit protection).
+- [ ] **Phase 4:** Export & Reporting Utilities (Save results directly to JSON, CSV, or TXT formats).
 
 ---
 
