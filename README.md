@@ -1,4 +1,4 @@
-# 🛡️ Dynamix Recon Bot
+# 🛡️ Dynamic Recon Bot
 
 An automated, asynchronous network reconnaissance and OSINT (Open Source Intelligence) tool built with Python and `httpx`. Designed for security professionals and penetration testers to gather assets quickly and efficiently.
 
