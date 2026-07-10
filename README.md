@@ -2,7 +2,7 @@
 
 An automated, asynchronous network reconnaissance and OSINT (Open Source Intelligence) tool built with Python and `httpx`. Designed for security professionals and penetration testers to gather assets quickly and efficiently.
 
-> ⚠️ **Note:** This project is currently in active development. The current version implements **Phase 1 (Passive Subdomain Enumeration)**, **Phase 2 (DNS Resolution)**, and **Phase 3 (Shodan Port & Vulnerability Scanning)**. CLI argument parsing and export utilities are planned for upcoming updates (see [Project Roadmap](#-project-roadmap)).
+> ⚠️ **Note:** This project is currently in active development. The current version implements **Phase 1 (Passive Subdomain Enumeration)**, **Phase 2 (DNS Resolution)**, **Phase 3 (Shodan Port & Vulnerability Scanning)**, and **Phase 4 (Export & Reporting Utilities)**.
 
 ---
 
@@ -101,6 +101,15 @@ When prompted, enter your target domain or IP address:
 Target (eg: google.com or 8.8.8.8): google.com
 ```
 
+### CLI Arguments
+For automated or non-interactive workflows, you can pass arguments directly:
+```bash
+python recon.py -t google.com -o results.html -f html
+```
+- `-t, --target`: Target domain or IP address.
+- `-o, --output`: Filepath to save the report (e.g., `report.json`).
+- `-f, --format`: Export format (`json`, `csv`, `txt`, `html`).
+
 **Domain Mode:** Runs the full pipeline — subdomain enumeration → DNS resolution → Shodan scan.
 
 **IP Mode:** Skips directly to the Shodan scan.
@@ -161,7 +170,8 @@ Target (eg: google.com or 8.8.8.8): 8.8.8.8
 - [x] **Phase 1:** Passive Subdomain Enumeration (Concurrently fetched, sanitized & sorted).
 - [x] **Phase 2:** Active DNS Resolution (Subdomains resolved to unique IPv4 addresses concurrently).
 - [x] **Phase 3:** Shodan Port & Vulnerability Scanning (Open ports, services, and CVEs retrieved per IP with rate-limit protection).
-- [ ] **Phase 4:** Export & Reporting Utilities (Save results directly to JSON, CSV, or TXT formats).
+- [x] **Phase 4:** Export & Reporting Utilities (Save results directly to JSON, CSV, TXT, and HTML formats).
+- [ ] **Phase 5:** Recon Enhancements (CIDR block support, DNS wildcard detection, active fallback scanner).
 
 ---
 

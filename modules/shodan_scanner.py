@@ -39,6 +39,10 @@ async def scan_ip_shodan(client: httpx.AsyncClient, ip: str, api_key: str) -> di
             "vulns": vulns
         }
         
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 403:
+            return {"ip": ip, "error": "Access Forbidden (403). Your Shodan API key might be invalid, expired, or inactive."}
+        return {"ip": ip, "error": f"HTTP Error {e.response.status_code}: {e.response.reason_phrase}"}
     except httpx.RequestError as e:
         return {"ip": ip, "error": f"Connection error: {str(e)}"}
 
